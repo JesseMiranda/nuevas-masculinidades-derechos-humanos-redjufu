@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego: Nuevas Masculinidades - REDJUFU</title>
+    <style>
+        :root {
+            --primary: #4A154B;
+            --primary-light: #6B1D6E;
+            --secondary: #E01E5A;
+            --accent-green: #2EB67D;
+            --accent-yellow: #ECB22E;
+            --bg-gradient: linear-gradient(135deg, #1b0424 0%, #4a154b 50%, #100217 100%);
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* HEADER ESTRUCTURADO */
+        header {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 15px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-content {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .badge-header {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 2px; }
+        p.subtitle { font-size: 0.9rem; opacity: 0.85; }
+
+        /* CONTENEDOR PRINCIPAL CENTRADO */
+        main {
+            width: 100%;
+            max-width: 900px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 15px;
+        }
+
+        /* Pantalla 1: Registro */
+        .start-screen {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--secondary) 0%, #b01040 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 25px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(224, 30, 90, 0.4);
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .primary-btn:hover { opacity: 0.95; transform: translateY(-2px); }
+
+        /* Pantalla 2: Juego */
+        .game-wrapper {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stats-bar {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-item { text-align: center; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; opacity: 0.8; }
+        .stat-value { font-size: 1.4rem; font-weight: bold; }
+        .score-val { color: var(--accent-yellow); }
+
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-green);
+            transition: width 0.3s ease;
+        }
+
+        /* Área Fila de Tarjetas (Máx 3) */
+        .deck-area {
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: grab;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            width: calc(33.33% - 12px);
+            min-width: 220px;
+            text-align: center;
+            touch-action: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:active { cursor: grabbing; }
+        .card.dragging { opacity: 0.4; transform: scale(0.95); }
+        .card.bounce { animation: shake 0.4s ease; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* Cajas Receptoras */
+        .zones-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .dropzone {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .dropzone.highlight {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-yellow);
+        }
+
+        .dropzone-header {
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid;
+            width: 100%;
+        }
+
+        .zone-tradicional .dropzone-header { color: #FF6B6B; border-color: #FF6B6B; }
+        .zone-nuevas .dropzone-header { color: #2EB67D; border-color: #2EB67D; }
+
+        .dropzone-cards {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .placed-card {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-left: 5px solid;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .zone-tradicional .placed-card { border-left-color: #FF6B6B; }
+        .zone-nuevas .placed-card { border-left-color: #2EB67D; }
+
+        /* Animación flotante de puntos */
+        .score-pop {
+            position: absolute;
+            font-weight: bold;
+            font-size: 1.4rem;
+            pointer-events: none;
+            animation: floatUp 1s forwards ease-out;
+            z-index: 100;
+        }
+        .score-plus { color: #2EB67D; }
+        .score-minus { color: #FF4D4D; }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-30px); }
+        }
+
+        /* Pantalla Final */
+        .final-screen {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .badge-icon { font-size: 4.5rem; margin: 10px 0; }
+        .badge-title { font-size: 1.3rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+
+        /* Modal Tap/Clic */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            background: #ffffff;
+            color: var(--text-dark);
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-card-text { font-weight: bold; margin: 15px 0; font-size: 1rem; color: var(--primary); }
+        .modal-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .modal-btn { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-tradicional { background: #E01E5A; }
+        .btn-nuevas { background: #2EB67D; }
+        .btn-cancel { background: #888; }
+
+        /* FOOTER ESTRUCTURADO */
+        footer {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 650px) {
+            .zones-container { grid-template-columns: 1fr; }
+            .card { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER FORMAL -->
+    <header>
+        <div class="header-content">
+            <span class="badge-header">Escuela de Líderes REDJUFU • Módulo 3</span>
+            <h1>Juego: Nuevas Masculinidades</h1>
+            <p class="subtitle">Desafío interactivo de clasificación de conductas</p>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL CENTRADO -->
+    <main>
+        <!-- PANTALLA 1: REGISTRO -->
+        <div class="start-screen" id="start-screen">
+            <h2>¡Bienvenido/a al Desafío!</h2>
+            <p style="margin-top: 8px; font-size: 0.9rem; color: #666;">
+                Ingresa tu nombre para comenzar la clasificación de tarjetas.
+            </p>
+            <div class="input-group">
+                <label for="player-name">Ingresa nombre y apellido:</label>
+                <input type="text" id="player-name" placeholder="Ej. Carlos Martínez" autocomplete="off">
+            </div>
+            <button class="primary-btn" onclick="iniciarJuego()">Iniciar Actividad</button>
+        </div>
+
+        <!-- PANTALLA 2: JUEGO -->
+        <div class="game-wrapper" id="game-wrapper">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-label">Líder</div>
+                    <div class="stat-value" id="disp-name" style="font-size: 1.1rem; color: #fff;">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Puntos</div>
+                    <div class="stat-value score-val" id="score">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Progreso</div>
+                    <div class="stat-value" id="progress-text">0 / 15</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <!-- Tarjetas dinámicas (Máx 3) -->
+            <div class="deck-area" id="deck-area"></div>
+
+            <!-- Cajas receptoras -->
+            <div class="zones-container">
+                <div class="dropzone zone-tradicional" data-target="tradicional">
+                    <div class="dropzone-header">📦 Masculinidad Tradicional / Hegemónica</div>
+                    <div class="dropzone-cards" id="cards-tradicional"></div>
+                </div>
+                <div class="dropzone zone-nuevas" data-target="nuevas">
+                    <div class="dropzone-header">📦 Nuevas Masculinidades y Corresponsabilidad</div>
+                    <div class="dropzone-cards" id="cards-nuevas"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANTALLA 3: RESULTADOS Y ENTREGA DE INSIGNIA -->
+        <div class="final-screen" id="final-screen">
+            <div class="badge-icon" id="final-icon">🏆</div>
+            <h2 id="final-greeting">¡Felicidades!</h2>
+            <div class="badge-title" id="final-badge-title">Líder Transformador/a</div>
+            <p style="margin: 10px 0; font-size: 0.95rem; color: #555;" id="final-msg">
+                Has demostrado una comprensión sólida de los principios de equidad y nuevas masculinidades.
+            </p>
+            <h3 style="color: var(--primary); font-size: 2rem; margin: 15px 0;" id="final-score">0 Pts</h3>
+            <button class="primary-btn" onclick="reiniciarJuego()">Volver a Jugar</button>
+        </div>
+    </main>
+
+    <!-- FOOTER INSTITUCIONAL -->
+    <footer>
+        Red de Juventudes FUSALMO • Escuela de Líderes 2026
+    </footer>
+
+    <!-- MODAL SELECCIÓN DIRECTA (MÓVILES) -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <h3>Selecciona la caja destino:</h3>
+            <div class="modal-card-text" id="modal-card-text">...</div>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-tradicional" onclick="clasificarDesdeModal('tradicional')">Masculinidad Tradicional</button>
+                <button class="modal-btn btn-nuevas" onclick="clasificarDesdeModal('nuevas')">Nuevas Masculinidades</button>
+                <button class="modal-btn btn-cancel" onclick="cerrarModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bancoTarjetas = [
+            { id: 1, texto: "Reprimir el llanto y las emociones por temor a parecer débil.", categoria: "tradicional" },
+            { id: 2, texto: "Compartir de forma equitativa las labores de cuidado e higiene del hogar.", categoria: "nuevas" },
+            { id: 3, texto: "Asumir una paternidad afectiva, presente y corresponsable en la crianza.", categoria: "nuevas" },
+            { id: 4, texto: "Creer que la responsabilidad económica debe recaer únicamente en el hombre.", categoria: "tradicional" },
+            { id: 5, texto: "Expresar sentimientos de vulnerabilidad y solicitar ayuda cuando se necesita.", categoria: "nuevas" },
+            { id: 6, texto: "Tomar las decisiones del proyecto juvenil sin consultar al resto del equipo.", categoria: "tradicional" },
+            { id: 7, texto: "Reconocer y cuestionar los privilegios machistas heredados en la sociedad.", categoria: "nuevas" },
+            { id: 8, texto: "Considerar que el cuidado de personas enfermas o adultas es solo de mujeres.", categoria: "tradicional" },
+            { id: 9, texto: "Resolver desacuerdos mediante la escucha activa, la empatía y la negociación.", categoria: "nuevas" },
+            { id: 10, texto: "Demostrar superioridad o fuerza física para validar la hombría ante los demás.", categoria: "tradicional" },
+            { id: 11, texto: "Fomentar el liderazgo compartido y equitativo en los espacios comunitarios.", categoria: "nuevas" },
+            { id: 12, texto: "Evitar tareas domésticas aduciendo que son de la esfera privada femenina.", categoria: "tradicional" },
+            { id: 13, texto: "Practicar el autocuidado personal y el equilibrio entre vida laboral y emocional.", categoria: "nuevas" },
+            { id: 14, texto: "Justificar conductas impulsivas o agresivas como algo 'natural' de los hombres.", categoria: "tradicional" },
+            { id: 15, texto: "Apoyar activamente los derechos y la autonomía integral de las mujeres.", categoria: "nuevas" }
+        ];
+
+        let nombreJugador = "";
+        let tarjetasPendientes = [];
+        let tarjetasEnPantalla = [];
+        let puntaje = 0;
+        let completadas = 0;
+        let tarjetaSeleccionadaModal = null;
+        let intentosFallidos = {};
+
+        const deckArea = document.getElementById('deck-area');
+        const scoreElem = document.getElementById('score');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('progress-bar');
+        const modal = document.getElementById('modal');
+
+        function iniciarJuego() {
+            const input = document.getElementById('player-name').value.trim();
+            if (!input) {
+                alert("Por favor, ingresa tu nombre para continuar.");
+                return;
+            }
+            nombreJugador = input;
+            document.getElementById('disp-name').innerText = nombreJugador;
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('final-screen').style.display = 'none';
+            document.getElementById('game-wrapper').style.display = 'flex';
+
+            tarjetasPendientes = [...bancoTarjetas].sort(() => Math.random() - 0.5);
+            tarjetasEnPantalla = [];
+            puntaje = 0;
+            completadas = 0;
+            intentosFallidos = {};
+
+            document.getElementById('cards-tradicional').innerHTML = '';
+            document.getElementById('cards-nuevas').innerHTML = '';
+
+            actualizarStats();
+            llenarDeck();
+        }
+
+        function llenarDeck() {
+            while (tarjetasEnPantalla.length < 3 && tarjetasPendientes.length > 0) {
+                tarjetasEnPantalla.push(tarjetasPendientes.shift());
+            }
+            renderizarDeck();
+        }
+
+        function renderizarDeck() {
+            deckArea.innerHTML = '';
+            if (tarjetasEnPantalla.length === 0 && completadas === 15) {
+                finalizarJuego();
+                return;
+            }
+
+            tarjetasEnPantalla.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.draggable = true;
+                card.innerText = item.texto;
+                card.dataset.id = item.id;
+
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', item.id);
+                    card.classList.add('dragging');
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                });
+
+                card.addEventListener('click', () => {
+                    tarjetaSeleccionadaModal = item;
+                    document.getElementById('modal-card-text').innerText = item.texto;
+                    modal.classList.add('active');
+                });
+
+                deckArea.appendChild(card);
+            });
+        }
+
+        document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('highlight');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('highlight');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('highlight');
+                const id = e.dataTransfer.getData('text/plain');
+                evaluarClasificacion(parseInt(id), zone.dataset.target, e.clientX, e.clientY);
+            });
+        });
+
+        function evaluarClasificacion(id, categoriaDestino, posX, posY) {
+            const index = tarjetasEnPantalla.findIndex(t => t.id === id);
+            if (index === -1) return;
+
+            const tarjeta = tarjetasEnPantalla[index];
+
+            if (tarjeta.categoria === categoriaDestino) {
+                let puntosGanados = intentosFallidos[id] ? 50 : 100;
+                puntaje += puntosGanados;
+                completadas++;
+
+                mostrarAnimacionScore(`+${puntosGanados}`, 'score-plus', posX, posY);
+
+                const container = document.getElementById(`cards-${categoriaDestino}`);
+                const placedCard = document.createElement('div');
+                placedCard.className = 'placed-card';
+                placedCard.innerText = tarjeta.texto;
+                container.appendChild(placedCard);
+
+                tarjetasEnPantalla.splice(index, 1);
+                actualizarStats();
+                llenarDeck();
+            } else {
+                intentosFallidos[id] = true;
+                puntaje = Math.max(0, puntaje - 20);
+                mostrarAnimacionScore('-20', 'score-minus', posX, posY);
+
+                const cardElem = document.querySelector(`.card[data-id="${id}"]`);
+                if (cardElem) {
+                    cardElem.classList.add('bounce');
+                    setTimeout(() => cardElem.classList.remove('bounce'), 400);
+                }
+                actualizarStats();
+            }
+        }
+
+        function clasificarDesdeModal(categoria) {
+            if (tarjetaSeleccionadaModal) {
+                evaluarClasificacion(tarjetaSeleccionadaModal.id, categoria, window.innerWidth / 2, window.innerHeight / 2);
+                cerrarModal();
+            }
+        }
+
+        function cerrarModal() {
+            modal.classList.remove('active');
+            tarjetaSeleccionadaModal = null;
+        }
+
+        function mostrarAnimacionScore(texto, clase, x, y) {
+            const el = document.createElement('div');
+            el.className = `score-pop ${clase}`;
+            el.innerText = texto;
+            el.style.left = `${x || window.innerWidth / 2}px`;
+            el.style.top = `${y || window.innerHeight / 2}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        function actualizarStats() {
+            scoreElem.innerText = puntaje;
+            progressText.innerText = `${completadas} / 15`;
+            progressBar.style.width = `${(completadas / 15) * 100}%`;
+        }
+
+        function finalizarJuego() {
+            document.getElementById('game-wrapper').style.display = 'none';
+            document.getElementById('final-greeting').innerText = `¡Excelente trabajo, ${nombreJugador}!`;
+            document.getElementById('final-score').innerText = `${puntaje} Pts`;
+
+            let insignia = "🏆";
+            let titulo = "Líder Transformador/a";
+            let msg = "¡Rendimiento sobresaliente! Demuestras un alto compromiso con la equidad y las nuevas masculinidades.";
+
+            if (puntaje < 1000) {
+                insignia = "🥈";
+                titulo = "Líder en Aprendizaje";
+                msg = "¡Buen esfuerzo! Continúa repasando los conceptos para fortalecer el enfoque de corresponsabilidad.";
+            } else if (puntaje < 1300) {
+                insignia = "🥇";
+                titulo = "Promotor/a de Equidad";
+                msg = "¡Gran trabajo! Tienes bases muy sólidas sobre nuevas masculinidades y relaciones igualitarias.";
+            }
+
+            document.getElementById('final-icon').innerText = insignia;
+            document.getElementById('final-badge-title').innerText = titulo;
+            document.getElementById('final-msg').innerText = msg;
+            document.getElementById('final-screen').style.display = 'block';
+        }
+
+        function reiniciarJuego() {
+            document.getElementById('final-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+            document.getElementById('player-name').value = '';
+        }
+    </script>
+</body>
+</html>
